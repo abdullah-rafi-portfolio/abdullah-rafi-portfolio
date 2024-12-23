@@ -1,0 +1,58 @@
+How to Grant Access to a Shared Mailbox Using PowerShell
+
+This guide covers how to grant users access to a shared mailbox in Exchange Online. It includes steps for granting read/manage access and full access permissions, along with troubleshooting tips for common issues.
+
+Prerequisites
+Before proceeding, ensure the following:
+
+You have the required permissions to manage shared mailboxes.
+The Exchange Online PowerShell module is installed on your machine.
+The user’s account is active and licensed for Microsoft 365.
+
+Step 1. Connect to Exchange Online
+
+Connect-ExchangeOnline -UserPrincipalName admin@yourdomain.com
+
+Step 2. Grant permissions
+
+- Here is the command to grant Read permissions:
+
+Add-MailboxPermission -Identity "shared@domain.com" `
+    -User "user@domain.com" -AccessRights ReadPermission -InheritanceType All
+
+- Here is how to grant Send As permissions:
+
+Add-MailboxPermission -Identity "shared@domain.com" `
+    -User "user@domain.com" -AccessRights SendAs -InheritanceType All
+
+- Here is how to add FullAccess permissions:
+
+# Grant Full Access
+Add-MailboxPermission -Identity "shared@domain.com" `
+    -User "user@domain.com" -AccessRights FullAccess -InheritanceType All
+
+NOTE - FulLAccess is much more comprehensive than Read permissions - Here is a comparison of having Read & Send As, Vs. having FullAccess:
+
+![Comparison Screenshot](images/perm-comparison-sendas-full-sharedmailbox.png)
+
+*Note: Send As must be granted separately for Full Access users if they need it.
+
+Access can also be allocated via the Exchange Online portal, however this has only 2 options:
+
+- Read and Manage - behaves as 'Full Access'
+- Send As
+
+For more granular control of permissions, using PowerShell is recommended.
+
+Check Permissions in PowerShell
+
+- Check Full Access permissions:
+
+Get-MailboxPermission -Identity "shared@domain.com" | `
+    Where-Object { $_.User -like "user@domain.com" }
+
+- Check Send As permissions:
+
+Get-MailboxPermission -Identity "shared@domain.com"
+
+I will add the 'remove' commands once I have thoroughly tested them.
